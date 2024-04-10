@@ -1,0 +1,6 @@
+@GrafanaTest_HostAddress = http://localhost:5107
+
+GET {{GrafanaTest_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
