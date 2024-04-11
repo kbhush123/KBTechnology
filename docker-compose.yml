@@ -13,7 +13,7 @@ volumes:
     driver: local
 
 services:
-  openremotemanagegatewayapi:
+  grafanatestapi:
     image: grafanatestapi
     depends_on:
       - otel-collector

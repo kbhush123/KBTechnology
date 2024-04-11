@@ -1,4 +1,3 @@
-using GrafanaTest;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 
@@ -7,23 +6,18 @@ var builder = WebApplication.CreateBuilder(args);
 // add prometheus exporter
 builder.Services.AddOpenTelemetry()
     .WithMetrics(opt =>
-
         opt
             .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("GrafanaTest"))
-            .AddMeter(builder.Configuration.GetValue<string>("OpenRemoteManageMeterName"))
+            .AddMeter(builder.Configuration.GetValue<string>("GrafanaTestMeterName"))
             .AddAspNetCoreInstrumentation()
             .AddRuntimeInstrumentation()
             .AddProcessInstrumentation()
             .AddOtlpExporter(otlpOptions =>
             {
-                //otlpOptions.Endpoint = new Uri("http://otel-collector:4317");
+               
                 otlpOptions.Endpoint = new Uri("http://host.docker.internal:4317");
               
             })
-    //.AddOtlpExporter(opts =>
-    //{
-    //    opts.Endpoint = new Uri(builder.Configuration["Otel:Endpoint"]);
-    //})
     );
 
 // Add services to the container.
@@ -44,34 +38,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecasts", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecastDetails
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecasts")
-.WithOpenApi();
-
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
 
-record WeatherForecastDetails(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+
